@@ -5,8 +5,8 @@ exports.sendMail = async (email, subject, html) => {
 			service: "gmail",
 			host: process.env.MAIL_HOST,
 			auth: {
-				user: process.env.EMAIL_USER, // Your Gmail email address
-				pass: process.env.EMAIL_PASS, // Your Gmail app password (generate one if 2-Step Verification is enabled)
+				user: process.env.MAIL_USER, // Your Gmail email address
+				pass: process.env.MAIL_PASS, // Your Gmail app password (generate one if 2-Step Verification is enabled)
 			},
 		});
 		const info = await transporter.sendMail({

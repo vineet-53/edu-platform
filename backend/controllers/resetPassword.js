@@ -1,8 +1,10 @@
 const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { sendMail } = require("../utilities/sendMail");
 const { passwordHash } = require("../utilities/password");
+const { passwordUpdated } = require("../mail/passwordUpdated");
 
 exports.resetPasswordToken = async (req, res) => {
 	try {
@@ -41,7 +43,6 @@ exports.resetPasswordToken = async (req, res) => {
 		return res.status(200).json({
 			success: true,
 			message: "Reset Password Link Sended",
-			user: updatedUser,
 		});
 	} catch (err) {
 		return res.status(400).json({
@@ -54,24 +55,27 @@ exports.resetPasswordToken = async (req, res) => {
 exports.resetPassword = async (req, res) => {
 	try {
 		const { resetPasswordToken } = req.params;
+
 		const { password, confirmPassword } = req.body;
 
-		if (!password || !confirmPassword) {
+		if (!resetPasswordToken || !password || !confirmPassword) {
 			throw new Error("Missing Details");
 		}
 
 		if (password !== confirmPassword) {
-			throw new Error("Credentials Not Matched");
+			throw "Password Not Matched";
 		}
 
 		const user = await User.findOne({ resetPasswordToken });
 
-		if (password === user.password) {
-			throw new Error("Old Password Couldn't be set");
+		if (!user) {
+			throw new Error("Reset Token Not Found");
 		}
 
-		if (!user) {
-			throw new Error("User not registered");
+		const result = await bcrypt.compare(password, user.password);
+
+		if (result) {
+			throw new Error("Old Password Couldn't be set");
 		}
 
 		if (!user.resetPasswordToken) {
@@ -83,13 +87,19 @@ exports.resetPassword = async (req, res) => {
 		}
 		// hash password
 		user.password = await passwordHash(password, 10);
-		// save user
+
+		user.resetPasswordToken = null;
 		await user.save();
+
+		await sendMail(
+			user.email,
+			"Edusync Account Password Updated",
+			passwordUpdated(user.email, `${user.firstName} ${user.lastName}`)
+		);
 
 		return res.status(200).json({
 			success: true,
 			message: "Password Reset Successfully",
-			user,
 		});
 	} catch (err) {
 		return res.status(401).json({
