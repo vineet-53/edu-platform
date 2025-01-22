@@ -1,5 +1,13 @@
 const express = require("express");
 const router = express.Router();
+
+const {
+	createRating,
+	getAvgRating,
+	getAllRatingsAndReviews,
+	deleteRatingAndReviews,
+} = require("../controllers/rating");
+
 const {
 	createCourse,
 	getAllCourses,
@@ -82,9 +90,16 @@ router.post(
 router.post("/deleteSubSection", auth, isInstructor, deleteSubSection);
 
 router.get("/progress", auth, getProgressPercentage);
+
 router.post("/updateCourseProgress", auth, updateCourseProgress);
 router.post("/add-to-cart", auth, addToCart);
 router.get("/getFullCartDetails", auth, getFullCartDetails);
 router.post("/removeItemFromCart", auth, removeItemFromCart);
+
+// ratings
+router.post("/createRating", auth, isStudent, createRating);
+router.delete("/deleteRating", auth, isStudent, deleteRatingAndReviews);
+router.get("/getAverageRating", getAvgRating);
+router.get("/getAllReviews", getAllRatingsAndReviews);
 
 module.exports = router;

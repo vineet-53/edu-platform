@@ -47,7 +47,6 @@ const courseSchema = new Schema({
 
 	thumbnailPublicId: {
 		type: String,
-		required: true,
 	},
 
 	tag: {

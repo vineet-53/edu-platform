@@ -132,12 +132,12 @@ exports.getFullCourseDetails = async (req, res) => {
 				},
 			})
 			.populate("category")
-			// .populate({
-			//     path : "ratingAndReviews" ,
-			//     populate : {
-			//         path : "user"
-			//     }
-			// })
+			.populate({
+				path: "ratingAndReviews",
+				populate: {
+					path: "user",
+				},
+			})
 			.populate({
 				path: "tag",
 				populate: {
@@ -155,7 +155,7 @@ exports.getFullCourseDetails = async (req, res) => {
 		return res.status(200).json({
 			success: true,
 			message: "fetched all courses ",
-			data: courseDetails,
+			course: courseDetails,
 		});
 	} catch (err) {
 		return res.status(401).json({
@@ -304,11 +304,14 @@ exports.deleteCourse = async (req, res) => {
 exports.getCourseDetails = async (req, res) => {
 	try {
 		const { id: courseId } = req.params;
+
 		if (!courseId) {
 			throw new Error("Missing Params");
 		}
 
-		const course = await Course.findById(courseId).populate("instructor");
+		const course = await Course.findById(courseId)
+			.populate("instructor")
+			.populate("ratingAndReviews");
 		if (!course) {
 			throw new Error("Course Not Found");
 		}

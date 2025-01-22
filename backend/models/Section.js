@@ -22,7 +22,6 @@ const subSectionSchema = new Schema({
 	},
 	videoUrlPublicId: {
 		type: String,
-		required: true,
 	},
 	additionalUrl: {
 		type: String,
