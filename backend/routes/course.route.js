@@ -42,13 +42,14 @@ const {
 	isStudent,
 	isInstructor,
 } = require("../middlewares/auth");
+
 const upload = require("../configs/multer");
 
 router.post("/createCategory", auth, isAdmin, createCategory);
-router.get("/deleteCategory/:id", auth, isAdmin, deleteCategory);
 router.post("/updateCategoryPageDetails", auth, isAdmin, updateCategory);
+router.get("/deleteCategory", auth, isAdmin, deleteCategory);
 router.get("/showAllCategories", showAllCategories);
-router.get("/getCategoryPageDetails/:id", getCategoryPageDetails);
+router.get("/getCategoryPageDetails", getCategoryPageDetails);
 // course
 router.post(
 	"/createCourse",
@@ -58,7 +59,7 @@ router.post(
 	createCourse
 );
 router.get("/getAllCourses", getAllCourses);
-router.get("/getFullCourseDetails/:id", getFullCourseDetails);
+router.get("/getFullCourseDetails", getFullCourseDetails);
 router.put(
 	"/editCourse",
 	auth,
@@ -66,12 +67,14 @@ router.put(
 	upload.single("thumbnailImage"),
 	updateCourse
 );
-router.get("/getCourseDetails/:id", auth, getCourseDetails);
-router.delete("/deleteCourse/:id", auth, isInstructor, deleteCourse);
+router.get("/getCourseDetails", auth, getCourseDetails);
+router.delete("/deleteCourse", auth, isInstructor, deleteCourse);
+
 // section
 router.post("/addSection", auth, isInstructor, addSection);
 router.post("/updateSection", auth, isInstructor, updateSection);
 router.post("/deleteSection", auth, isInstructor, deleteSection);
+
 // sub section
 router.post(
 	"/addSubSection",

@@ -271,8 +271,6 @@ exports.resetProfilePicture = async (req, res) => {
 		return res.status(200).json({
 			success: true,
 			message: "Reset User Picture",
-			user,
-			image: resetImageUrl,
 		});
 	} catch (err) {
 		return res.status(401).json({

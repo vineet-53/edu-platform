@@ -34,7 +34,7 @@ exports.createCategory = async (req, res) => {
 };
 exports.deleteCategory = async (req, res) => {
 	try {
-		const { id } = req.params;
+		const { categoryId: id } = req.query;
 		if (!id) {
 			throw "Missing Details";
 		}
@@ -111,7 +111,7 @@ exports.showAllCategories = async (req, res) => {
 };
 exports.getCategoryPageDetails = async (req, res) => {
 	try {
-		const { id: categoryId } = req.params;
+		const { categoryId } = req.query;
 
 		if (!categoryId) {
 			throw new Error("Missing Details");

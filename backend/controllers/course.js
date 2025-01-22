@@ -113,7 +113,7 @@ exports.getAllCourses = async (req, res) => {
 };
 exports.getFullCourseDetails = async (req, res) => {
 	try {
-		const { id: courseId } = req.params;
+		const { courseId } = req.query;
 
 		if (!courseId) {
 			throw new Error("missing details");
@@ -242,7 +242,7 @@ exports.updateCourse = async (req, res) => {
 };
 exports.deleteCourse = async (req, res) => {
 	try {
-		const { id: courseId } = req.params;
+		const { courseId } = req.query;
 		if (!courseId) {
 			throw new Error("Missing Params");
 		}
@@ -303,7 +303,7 @@ exports.deleteCourse = async (req, res) => {
 
 exports.getCourseDetails = async (req, res) => {
 	try {
-		const { id: courseId } = req.params;
+		const { courseId } = req.query;
 
 		if (!courseId) {
 			throw new Error("Missing Params");
