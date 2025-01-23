@@ -1,6 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit";
 
-const initialState = {
+
+interface CourseState {
+	step : number, 
+	course: object | null, 
+	editCourse : boolean, 
+	paymentLoading : boolean
+}
+
+const initialState : CourseState= {
 	step: 1,
 	course: null,
 	editCourse: false,
@@ -11,10 +19,10 @@ const courseSlice = createSlice({
 	name: "course",
 	initialState,
 	reducers: {
-		setStep: (state, action) => {
+		setStep: (state, action : PayloadAction<number>) => {
 			state.step = action.payload;
 		},
-		setCourse: (state, action) => {
+		setCourse: (state, action ) => {
 			state.course = action.payload;
 		},
 		setEditCourse: (state, action) => {
