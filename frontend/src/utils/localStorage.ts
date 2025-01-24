@@ -1,6 +1,6 @@
-export const getItemFromLocalStorage = (item : string)  => {
-	let value : (string | null)  = localStorage.getItem(item); 
-	if(!value) { 
+export const getItemFromLocalStorage = (item : string )  => {
+	let value = localStorage.getItem(item); 
+	if(!value ) { 
 		return null
 	}
 	return JSON.parse(value); 

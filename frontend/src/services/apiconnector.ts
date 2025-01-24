@@ -4,15 +4,22 @@ import axios, {
     AxiosRequestConfig,
     Method,
   } from "axios";
+import { getItemFromLocalStorage } from "../utils/localStorage";
+
+axios.defaults.xsrfCookieName = 'XSRF-TOKEN';
+axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN'
   
   const axiosConfig: AxiosRequestConfig = {
     baseURL: "http://localhost:8000/api/v1/",
+    headers : { 
+      "X-Auth-Token" : `${getItemFromLocalStorage('token')}`
+    }
   };
   
   export const axiosInstance: AxiosInstance = axios.create(axiosConfig);
   
   export const apiConnector = (
-    method: Method, 
+    method: Method | string, 
     url: string,
     bodyData?: any,
     headers?: AxiosHeaders | Record<string, string>, 

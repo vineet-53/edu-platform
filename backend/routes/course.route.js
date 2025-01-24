@@ -20,6 +20,7 @@ const {
 	getFullCartDetails,
 	removeItemFromCart,
 	getProgressPercentage,
+	findCourse,
 } = require("../controllers/course");
 const {
 	createCategory,
@@ -45,6 +46,7 @@ const {
 
 const upload = require("../configs/multer");
 
+router.get("/findCourses", auth, isStudent, findCourse);
 router.post("/createCategory", auth, isAdmin, createCategory);
 router.post("/updateCategoryPageDetails", auth, isAdmin, updateCategory);
 router.get("/deleteCategory", auth, isAdmin, deleteCategory);

@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineMenu, AiOutlineShoppingCart } from "react-icons/ai";
 import { BsChevronDown } from "react-icons/bs";
 import { Link, matchPath, useLocation } from "react-router-dom";
 import Logo from "../../assets/Logo/Logo-Full-Dark.png";
 import { NavbarLinks } from "../../constants/NavbarLinks";
-import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import { useAppSelector } from "../../hooks/store";
 import { ACCOUNT_TYPE } from "../../constants/AccountTypes";
+import ProfileDropdown from "../core/Auth/ProfileDropDown";
+import { apiConnector } from "../../services/apiconnector";
+import { category } from "../../services/endpoints";
+import { AxiosResponse } from "axios";
 
 function Navbar() {
 	const user = useAppSelector((state) => state.profile.user);
-	const token = useAppSelector((state) => state.auth.token);
 	const location = useLocation();
 
 	const [subLinks, setSubLinks] = useState<[]>([]);
@@ -19,6 +22,24 @@ function Navbar() {
 	function matchRoute(route: string) {
 		return matchPath({ path: route }, location.pathname);
 	}
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const response: AxiosResponse = await apiConnector(
+					category.GET_ALL_CATEGORY.method,
+					category.GET_ALL_CATEGORY.url
+				);
+				if (!response.data.success) {
+					throw response.data;
+				}
+				console.log(response.data.categories);
+				setSubLinks(response.data.categories);
+			} catch (error: any) {
+				console.error(error.message);
+			}
+		})();
+	}, []);
 
 	return (
 		<div
@@ -69,18 +90,20 @@ function Navbar() {
 																	(subLink: { courses: [] }) =>
 																		subLink?.courses?.length > 0
 																)
-																?.map((subLink: { name: string }, i) => (
-																	<Link
-																		to={`/catalog/${subLink.name
-																			.split(" ")
-																			.join("-")
-																			.toLowerCase()}`}
-																		className="rounded-lg bg-transparent py-4 pl-4 hover:bg-richblack-50"
-																		key={i}
-																	>
-																		<p>{subLink.name}</p>
-																	</Link>
-																))}
+																?.map(
+																	(
+																		subLink: { name: string; _id: string },
+																		i
+																	) => (
+																		<Link
+																			to={`/course/getCategoryPageDetails?categoryId=${subLink._id}`}
+																			className="rounded-lg bg-transparent py-4 pl-4 hover:bg-richblack-50"
+																			key={i}
+																		>
+																			<p>{subLink.name}</p>
+																		</Link>
+																	)
+																)}
 														</>
 													) : (
 														<p className="text-center">No Courses Found</p>
@@ -108,7 +131,7 @@ function Navbar() {
 					</ul>
 				</nav>
 				<div className="hidden items-center gap-x-4 md:flex">
-					{user && user?.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
+					{!!user && user?.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
 						<Link to="/dashboard/cart" className="relative">
 							<AiOutlineShoppingCart className="text-2xl text-richblack-100" />{" "}
 							{totalItems > 0 && (
@@ -118,14 +141,14 @@ function Navbar() {
 							)}
 						</Link>
 					)}
-					{token === null && (
+					{!user && (
 						<Link to="/login">
 							<button className="rounded-[8px] border border-richblack-700 bg-richblack-800 px-[12px] py-[8px] text-richblack-100">
 								Log in
 							</button>
 						</Link>
 					)}
-					{token === null && (
+					{!user && (
 						<Link to="/signup">
 							<button className="rounded-[8px] border border-richblack-700 bg-richblack-800 px-[12px] py-[8px] text-richblack-100">
 								{" "}
@@ -133,7 +156,7 @@ function Navbar() {
 							</button>
 						</Link>
 					)}
-					{/* {token !== null && <ProfileDropdown />}{" "} */}
+					{!!user && <ProfileDropdown />}{" "}
 					{/* added profile dropdown if token is not equal to null means user is present*/}
 				</div>
 				<button className="mr-4 md:hidden">

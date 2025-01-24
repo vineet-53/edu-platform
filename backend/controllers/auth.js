@@ -71,13 +71,16 @@ exports.signup = async (req, res) => {
 			courseProgress: [],
 		};
 		const userDoc = await User.create(userPayload);
+		const user = await User.findById(userDoc._id).select(
+			"-password -active -accountType -courseProgress"
+		);
 		if (!userDoc) {
 			throw new Error("Error Creating User");
 		}
 		return res.status(200).json({
 			success: true,
 			message: "User Registered Successfully",
-			user: userDoc,
+			user: user,
 		});
 	} catch (err) {
 		console.error(err.message);
@@ -93,10 +96,8 @@ exports.login = async (req, res) => {
 		if (!email || !password) {
 			throw new Error("Missing Details");
 		}
-		// find the user with email
-		const user = await User.findOne({ email: email })
-			.populate("profile")
-			.exec();
+
+		let user = await User.findOne({ email: email });
 
 		if (!user) {
 			throw new Error("User Not Found");
@@ -118,20 +119,22 @@ exports.login = async (req, res) => {
 		// store in the browser cookies
 		user.token = token;
 		user.active = true;
-		await user.save();
+		user = await user.save({ new: true });
+		user = await User.findById(user._id)
+			.populate("profile")
+			.select("-password -token -active -resetPasswordToken")
+			.exec();
 
 		// hash the token and save to cookie
 		const hashedToken = jwt.sign({ accessToken: token }, JWT_SECRET);
 
-		console.log("Hashed Token", hashedToken);
-
 		return res
-			.cookie("token", hashedToken, { httpOnly: true })
+			.cookie("token", hashedToken)
 			.status(200)
 			.json({
 				success: true,
 				message: "Logged In Succesfully",
-				token,
+				token: hashedToken,
 				user,
 			})
 			.send();

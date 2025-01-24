@@ -5,68 +5,75 @@ const PROFILE_API = `profile/`;
 export const root = {
 	RESET_PASSWORD_TOKEN: {
 		url: "reset-password-token",
-		method: "post",
+		method: "POST",
 	},
 	RESET_PASSWORD: {
 		url: "update-password",
-		method: "post",
+		method: "POST",
 	},
 };
 
 export const profile = {
 	DELETE_ACCOUNT: {
 		url: PROFILE_API + "deleteAccount",
-		method: "delete",
+		method: "DELETE",
 	},
 	CHANGE_PASSWORD: {
 		url: PROFILE_API + "changePassword",
-		method: "post",
+		method: "POST",
 	},
 	UPDATE_PROFILE: {
 		url: PROFILE_API + "updateProfile",
-		method: "put",
+		method: "PUT",
 	},
 	UPDATE_PROFILE_PICTURE: {
 		url: PROFILE_API + "updateDisplayPicture",
-		method: "put",
+		method: "PUT",
 	},
 	RESET_PROFILE_PICTURE: {
 		url: PROFILE_API + "resetProfilePicture",
-		method: "get",
+		method: "GET",
 	},
 	GET_USER_DETAILS: {
 		url: PROFILE_API + "getUserDetails",
-		method: "get",
+		method: "GET",
 	},
 	GET_ENROLLED_COURSE: {
 		url: PROFILE_API + "getEnrolledCourses",
-		method: "get",
+		method: "GET",
 	},
 	GET_INSTRUCTOR_COURSE: {
 		url: PROFILE_API + "getInstructorCourses",
-		method: "get",
+		method: "GET",
+
 	},
+
 };
 
 export const category = {
 	CREATE_CATEGORY: {
 		url: COURSE_API + "createCategory",
-		method: "post",
+		method: "POST",
 	},
 	GET_ALL_CATEGORY: {
 		url: COURSE_API + "showAllCategories",
-		method: "get",
+		method: "GET",
 	},
 	GET_CATEGORY_PAGE_DETAILS: {
 		url: COURSE_API + "getCategoryPageDetails",
-		method: "get",
+		method: "GET",
 	},
 };
 
 export const course = {
+
+	FIND_COURSES : { 
+		url : COURSE_API + "findCourses",  
+		method : "GET", 
+	},
 	CREATE_COURSE: {
 		url: COURSE_API + "createCourse",
-		method: "post",
+		method: "POST",
 	},
 	EDIT_COURSE: {
 		url: COURSE_API + "editCourse",
@@ -74,15 +81,15 @@ export const course = {
 	},
 	GET_ALL_COURSE: {
 		url: COURSE_API + "getAllCourses",
-		method: "get",
+		method: "GET",
 	},
 	GET_COURSE_DETAILS: {
 		url: COURSE_API + "getCourseDetails",
-		method: "get",
+		method: "GET",
 	},
 	GET_FULL_COURSE_DETAILS: {
 		url: COURSE_API + "getFullCourseDetails",
-		method: "get",
+		method: "GET",
 	},
 	DELETE_COURSE: {
 		url: COURSE_API + "deleteCourse",
@@ -90,66 +97,66 @@ export const course = {
 	},
 	GET_COURSE_PROGRESS: {
 		url: COURSE_API + "progress",
-		method: "get",
+		method: "GET",
 	},
 	UPDATE_COURSE_PROGRESS: {
 		url: COURSE_API + "updateCourseProgress",
-		method: "post",
+		method: "POST",
 	},
 };
 
 export const section = {
 	CREATE_SECTION: {
 		url: COURSE_API + "addSection",
-		method: "post",
+		method: "POST",
 	},
 	UPDATE_SECTION: {
 		url: COURSE_API + "updateSection",
-		method: "post",
+		method: "POST",
 	},
 	DELETE_SECTION: {
 		url: COURSE_API + "deleteSection",
-		method: "post",
+		method: "POST",
 	},
 };
 
 export const subSection = {
 	CREATE_SUB_SECTION: {
 		url: COURSE_API + "addSubSection",
-		method: "post",
+		method: "POST",
 	},
 	UPDATE_SUB_SECTION: {
 		url: COURSE_API + "updateSubSection",
-		method: "post",
+		method: "POST",
 	},
 	DELETE_SUB_SECTION: {
 		url: COURSE_API + "deleteSubSection",
-		method: "post",
+		method: "POST",
 	},
 };
 
 export const auth = {
 	REGISTER: {
 		url: AUTH_API + "signup",
-		method: "post",
+		method: "POST",
 	},
 	LOGIN: {
 		url: AUTH_API + "login",
-		method: "post",
+		method: "POST",
 	},
 	SEND_OTP: {
 		url: AUTH_API + "sendOtp",
-		method: "post",
+		method: "POST",
 	},
 	CHANGE_ACCOUNT_TYPE: {
 		url: AUTH_API + "changeAccountType",
-		method: "post",
+		method: "POST",
 	},
 };
 
 export const rating = {
 	GET_ALL_RATINGS: {
 		url: COURSE_API + "getAllReviews",
-		method: "get",
+		method: "GET",
 	},
 };

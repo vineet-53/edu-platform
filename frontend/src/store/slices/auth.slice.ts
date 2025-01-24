@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getItemFromLocalStorage } from "../../utils/localStorage";
 
 interface AuthState { 
-	signupData : null | object, 
-	token : object | null , 
+	signupData : any, 
+	token : string | null, 
 	loading : boolean
 }
 

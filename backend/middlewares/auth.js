@@ -3,12 +3,11 @@ const User = require("../models/User");
 
 exports.auth = async (req, res, next) => {
 	try {
-		if (!req.cookies.token) {
+		const hashedToken = req.headers["x-auth-token"] || req.cookies?.token;
+
+		if (!hashedToken) {
 			throw new Error("Missing Access Token");
 		}
-
-		const hashedToken = req.cookies.token;
-
 		const { accessToken } = jwt.verify(hashedToken, process.env.JWT_SECRET);
 
 		const decodedPayload = await jwt.verify(
@@ -17,6 +16,7 @@ exports.auth = async (req, res, next) => {
 		);
 
 		req.user = decodedPayload;
+
 		console.log("req.user  : ", req.user);
 		next();
 	} catch (err) {

@@ -525,3 +525,67 @@ exports.removeItemFromCart = async (req, res) => {
 		});
 	}
 };
+
+async function contains(string, tokenArr) {
+	const result = await new Promise((res, rej) => {
+		tokenArr.forEach((token) => {
+			if (string.trim().toLowerCase().includes(token)) {
+				res(true);
+				return;
+			}
+		});
+
+		rej(false);
+	})
+		.then((res) => res)
+		.catch((res) => false);
+
+	return result;
+}
+
+exports.findCourse = async (req, res) => {
+	try {
+		const search = req.query.search;
+		if (!search) {
+			throw "Search Query Not Found";
+		}
+		let courses = await Course.find(
+			{},
+			{
+				_id: true,
+				courseName: true,
+				courseDescription: true,
+				category: true,
+				whatYouWillLearn: true,
+				thumbnailImage: true,
+			}
+		)
+			.populate("category")
+			.select()
+			.exec();
+		console.log("COURSES", courses);
+		let searchTokens = search?.split("+");
+		console.log("SEARCH TOKEN ", searchTokens);
+		let coursesArr = courses.map((course) => {
+			if (
+				contains(course.courseName, searchTokens) ||
+				contains(course.courseDescription, searchTokens) ||
+				contains(course.category.name, searchTokens) ||
+				contains(course.whatYouWillLearn, searchTokens)
+			) {
+				return course;
+			}
+		});
+
+		return res.status(200).json({
+			success: true,
+			message: "Found all Courses",
+			courses: coursesArr,
+		});
+	} catch (err) {
+		return res.status(401).json({
+			success: false,
+			message: err.message,
+		});
+	}
+};

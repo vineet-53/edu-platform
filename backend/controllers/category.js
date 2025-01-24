@@ -92,10 +92,7 @@ exports.updateCategory = async (req, res) => {
 };
 exports.showAllCategories = async (req, res) => {
 	try {
-		const categoryDetails = await Category.find(
-			{},
-			{ name: true, description: true }
-		);
+		const categoryDetails = await Category.find({});
 
 		return res.status(200).json({
 			success: true,
