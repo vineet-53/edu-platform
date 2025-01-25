@@ -27,18 +27,21 @@ const subSectionSchema = new Schema({
 		type: String,
 	},
 });
-const sectionSchema = new Schema({
-	sectionName: {
-		type: String,
-		required: true,
-	},
-	subSection: [
-		{
-			type: Schema.Types.ObjectId,
-			ref: "SubSection",
+const sectionSchema = new Schema(
+	{
+		sectionName: {
+			type: String,
+			required: true,
 		},
-	],
-});
+		subSection: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: "SubSection",
+			},
+		],
+	},
+	{ timestamps: true }
+);
 
 const SubSection = mongoose.model("SubSection", subSectionSchema);
 const Section = mongoose.model("Section", sectionSchema);

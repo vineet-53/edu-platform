@@ -12,8 +12,10 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Profile from "./components/core/Dashboard/Profile/Profile";
 import PrivateRoute from "./components/core/Auth/PrivateRoute";
 import Dashboard from "./components/core/Dashboard/Dashboard";
-import Sidebar from "./components/core/Dashboard/Sidebar/Sidebar";
 import Courses from "./components/core/Dashboard/Courses/Courses";
+import CourseDetailsPage from "./components/core/Dashboard/Courses/CourseDetailsPage";
+import Cart from "./components/core/Dashboard/Cart/Cart";
+import CourseContent from "./components/core/Dashboard/Courses/CourseContent";
 
 function App() {
 	const token = useAppSelector((state) => state.auth.token);
@@ -75,16 +77,26 @@ function App() {
 				>
 					<Route path="my-profile" element={<Profile />} />
 					<Route path="courses" element={<Courses />} />
+					<Route path="wishlist" element={<Cart />} />
 					{/* <Route path="enrolled-courses" element={<Profile />} />
-					<Route path="wishlist" element={<Profile />} />
 					<Route path="purchase-history" element={<Profile />} />
 					<Route path="settings" element={<Profile />} /> */}
 				</Route>
 				{/* <Route path="courses/:courseId" element={<CourseDetails />} /> */}
 				{/* <Route path="forgot-password" element = { <OpenRoute> <ForgotPassword /> </OpenRoute> } />
-          <Route path="update-password/:id" element = { <OpenRoute> <UpdatePassword /> </OpenRoute> } />
-          <Route path="about" element = { <OpenRoute> <About /> </OpenRoute> } />
-          <Route path="/contact" element={<Contact />} /> */}
+					<Route path="update-password/:id" element = { <OpenRoute> <UpdatePassword /> </OpenRoute> } />
+					<Route path="about" element = { <OpenRoute> <About /> </OpenRoute> } />
+					<Route path="/contact" element={<Contact />} /> */}
+
+				<Route path="/course/:courseId" element={<CourseDetailsPage />} />
+				<Route
+					path="course-content/:courseId"
+					element={
+						<PrivateRoute>
+							<CourseContent />
+						</PrivateRoute>
+					}
+				/>
 			</Routes>
 		</div>
 	);

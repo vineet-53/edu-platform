@@ -8,7 +8,7 @@ const DashboardContentContainer = ({
 	styles?: string;
 }) => {
 	return (
-		<div className={`${styles} mt-8 ml-8 flex flex-1 flex-col gap-5`}>
+		<div className={`${styles} mt-8 md:ml-8 flex flex-1 flex-col gap-5`}>
 			{children}
 		</div>
 	);

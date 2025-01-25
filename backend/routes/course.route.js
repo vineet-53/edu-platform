@@ -21,6 +21,8 @@ const {
 	removeItemFromCart,
 	getProgressPercentage,
 	findCourse,
+	getCompletedVideos,
+	removeCourseProgress,
 } = require("../controllers/course");
 const {
 	createCategory,
@@ -61,7 +63,7 @@ router.post(
 	createCourse
 );
 router.get("/getAllCourses", getAllCourses);
-router.get("/getFullCourseDetails", getFullCourseDetails);
+router.get("/getFullCourseDetails", auth, isStudent, getFullCourseDetails);
 router.put(
 	"/editCourse",
 	auth,
@@ -96,7 +98,9 @@ router.post("/deleteSubSection", auth, isInstructor, deleteSubSection);
 
 router.get("/progress", auth, getProgressPercentage);
 
-router.post("/updateCourseProgress", auth, updateCourseProgress);
+router.get("/getCompletedVideos", auth, isStudent, getCompletedVideos);
+router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
+router.post("/removeCourseProgress", auth, isStudent, removeCourseProgress);
 router.post("/add-to-cart", auth, addToCart);
 router.get("/getFullCartDetails", auth, getFullCartDetails);
 router.post("/removeItemFromCart", auth, removeItemFromCart);

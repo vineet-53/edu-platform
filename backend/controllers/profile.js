@@ -161,12 +161,26 @@ exports.getUserDetails = async (req, res) => {
 		if (!userId) {
 			throw new Error("missing properties");
 		}
-		let user = await User.findById(userId).populate("profile").exec();
+		let user = await User.findById(userId)
+			.populate("profile")
+			.select("-resetPasswordToken -token -active ")
+			.exec();
+		let cart = await User.findById(userId)
+			.populate({
+				path: "cart",
+				populate: {
+					path: "ratingAndReviews",
+				},
+			})
+			.select("cart")
+			.exec();
+
 		console.log(user);
 		return res.status(200).json({
 			success: true,
 			message: "fetched all user details",
 			user,
+			cart,
 		});
 	} catch (err) {
 		return res.status(400).json({

@@ -25,7 +25,7 @@ const UrlText = () => {
 	pathnameArr = pathnameArr.filter((name) => name !== "");
 
 	return (
-		<div className="flex md:gap-2  max-sm:gap-1 text-richblack-400 max-md:text-sm max-sm:text-xs">
+		<div className="flex md:gap-2  max-sm:gap-1 text-richblack-500 max-md:text-sm max-sm:text-xs">
 			<Link to="/" className="coursor-pointer">
 				Home
 			</Link>

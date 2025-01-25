@@ -9,6 +9,7 @@ const rootRoutes = require("./routes/root.route.js");
 const authRoutes = require("./routes/auth.route.js");
 const courseRoutes = require("./routes/course.route.js");
 const profileRoutes = require("./routes/profile.route.js");
+const cartRouter = require("./routes/cart.route.js");
 const cloudinary = require("./configs/cloudinary.js");
 const db = require("./configs/db");
 
@@ -30,6 +31,7 @@ app.use("/api/v1", rootRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/profile", profileRoutes);
+app.use("/api/v1/cart", cartRouter);
 
 app.get("/", (req, res) => {
 	res.json("STUDY NOTION - server is running");

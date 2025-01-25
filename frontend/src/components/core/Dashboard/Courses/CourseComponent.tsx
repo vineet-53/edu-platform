@@ -1,60 +1,67 @@
-import { AxiosResponse } from "axios";
-import React, {
-	ChangeEvent,
-	FormEvent,
-	MutableRefObject,
-	RefObject,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { apiConnector } from "../../../../services/apiconnector";
-import { course } from "../../../../services/endpoints";
-import toast from "react-hot-toast";
-import IconBtn from "../../../common/IconBtn";
-import { Link } from "react-router-dom";
+import useOnClickOutside from "../../../../hooks/useOnClickOutside";
+import SearchCourseList from "./SearchCourseList";
 
-const CourseComponent = () => {
-	const [value, setValue] = useState("");
-	const [isFocus, setIsFocus] = useState<boolean>(true);
+export interface Course {
+	_id: string;
+	thumbnailImage: string;
+	courseName: string;
+	courseDescription: string;
+	instructor: any;
+	price: string;
+}
+
+const CourseComponent = ({ courseList }: { courseList: Course[] }) => {
+	const [isSearchInputFocus, setSearchInputFocus] = useState<boolean>(true);
 	const [inputLengthError, setInputLengthError] = useState(false);
-	const [courseList, setCourseList] = useState([]);
-	const handleSearchCourse = async (e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const search = value.trim().split(" ").join("+");
-		console.log("searching ", search);
-		(async () => {
-			try {
-				const response: AxiosResponse = await apiConnector(
-					course.FIND_COURSES.method,
-					`${course.FIND_COURSES.url}?search=${search}`
-				);
-				if (!response.data.success) {
-					throw response.data;
-				}
-				console.log(response.data.courses);
-				setCourseList(response.data.courses);
-			} catch (err: any) {
-				console.error(err.message);
-				toast.error(err.message);
+	const [value, setValue] = useState<string>("");
+	const inputRef = useRef(null);
+	const MAX_INPUT_LENGTH = 20;
+
+	const filterData = (courseList: Course[], value: string): Course[] => {
+		if (value == "") {
+			return [];
+		}
+		return courseList.filter((course: Course) => {
+			if (
+				course.courseDescription
+					.trim()
+					.toLocaleLowerCase()
+					.includes(value.trim().toLocaleLowerCase()) ||
+				course.courseName
+					.trim()
+					.toLocaleLowerCase()
+					.includes(value.trim().toLocaleLowerCase())
+			) {
+				return course;
 			}
-		})();
+		});
 	};
 
+	const searchedCourse = useMemo(
+		() => filterData(courseList, value),
+		[courseList, value]
+	);
+
+	useOnClickOutside(inputRef, () => setSearchInputFocus(false));
 	return (
 		<div className="flex flex-col gap-4">
-			<form onSubmit={handleSearchCourse}>
+			<div>
 				{inputLengthError && (
-					<span className="text-yellow-100">Exceeds 20 words</span>
+					<span className="text-yellow-100">
+						Exceeds {MAX_INPUT_LENGTH} words
+					</span>
 				)}
 				<div
-					className={`max-sm:px-1 max-sm:py-2 max-sm:w-[80%] max-w-md flex items-center justify-between px-4 py-2 border ${isFocus && "border-richblack-200 rounded-sm"}`}
+					className={`max-sm:px-1 max-sm:py-2 max-sm:w-[80%] max-w-md flex items-center justify-between px-4 py-2 border ${isSearchInputFocus && "border-richblack-200 rounded-sm"}`}
 				>
 					<input
 						type="text"
+						ref={inputRef}
 						className="outline-none max-sm:text-sm text-white text-xl font-inter"
-						placeholder="Search Courses"
+						placeholder="Search "
+						onFocus={() => setSearchInputFocus(true)}
 						onChange={(e: ChangeEvent<HTMLInputElement>) => {
 							if (e.target.value.length > 20) {
 								setInputLengthError(true);
@@ -63,41 +70,22 @@ const CourseComponent = () => {
 								}, 4000);
 								return;
 							}
+
 							setValue(e.target.value);
 						}}
 					/>
-					<button type="submit" className="cursor-pointer">
-						<FaSearch className="text-white" />
-					</button>
+					<FaSearch className="text-white" />
 				</div>
-			</form>
-			{courseList.length &&
-				courseList.map((item: any, index) => {
-					return (
-						<div key={index} className=" max-sm:w-[90%] sm:flex gap-3 ">
-							<div className="bg-white max-sm:h-40 max-sm:w-[100%] max-md:w-60 max-md:h-32 md:w-44 md:h-32 overflow-hidden rounded-sm ">
-								<img src={item?.thumbnailImage} alt="" />
-							</div>
-							<div className="flex flex-col text-left max-sm:gap-y-1 max-sm:mt-4 sm:gap-y-3">
-								<div className="text-white max-sm:text-2xl md:text-xl">
-									{item?.courseName}
-								</div>
-								<div className="text-richblack-400 max-sm:text-sm md:text-sm text-balance">
-									{item?.courseDescription.length < 100
-										? item?.courseDescription
-										: item?.courseDescription.slice(0, 100) + "..."}
-								</div>
-								<div className="flex items-end ">
-									<Link to={`/course?courseId=${item._id}`}>
-										<IconBtn customClasses="max-sm:mt-3 max-sm:w-full max-sm:text-center max-sm:py-2 max-sm:justify-center sm:w-fit">
-											More Details
-										</IconBtn>
-									</Link>
-								</div>
-							</div>
-						</div>
-					);
-				})}
+			</div>
+			{searchedCourse.length == 0 && value !== "" && (
+				<div className="text-pure-greys-600 max-md:text-sm md:text-xl flex justify-center md:w-lg ">
+					No Course Found
+				</div>
+			)}
+
+			{searchedCourse.length > 0 && (
+				<SearchCourseList courseList={searchedCourse} />
+			)}
 		</div>
 	);
 };

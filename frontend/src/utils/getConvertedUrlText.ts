@@ -1,4 +1,7 @@
 export function getConvertedUrlText(text: string) {
+	if(!text) { 
+		return ""
+	}
 	let textArr = text.split("-");
 	for (let i = 0; i < textArr.length; i++) {
 		textArr[i] = `${textArr[i][0].toUpperCase()}${textArr[i].slice(1)}`;

@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../../../hooks/store";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/store";
+import { setEdit } from "../../../../store/slices/profile.slice";
 import { EditButton } from "../../../common/EditButton";
 import PageHeadingTitlte from "../PageHeadingTitlte";
 
 const ProfileComponent = () => {
 	const { user } = useAppSelector((state) => state.profile);
-	const navigate = useNavigate();
+	const dispatch = useAppDispatch();
 	if (!user) {
 		return (
 			<div className="text-white flex justify-center items-center">
@@ -32,16 +32,27 @@ const ProfileComponent = () => {
 						</div>
 						<div className="text-sm text-richblack-200">{user.email}</div>
 					</div>
-					<div className="flex items-center ml-auto">
-						<EditButton styles="" handler={() => {}} />
-					</div>
+					{/* <div className="flex items-center ml-auto">
+						<EditButton
+							styles=""
+							handler={() => {
+								setEdit(true);
+								dispatch(setEdit(true));
+							}}
+						/>
+					</div> */}
 				</div>
 				<div className="max-sm:px-4 flex flex-col max-sm:gap-y-4 min-md:px-4 bg-richblack-800 max-md:w-[90%] min-md:max-lg:w-[80%] min-lg:w-[70%] py-4 rounded-xl lg:px-10 lg:py-8 sm:px-7 sm:gap-y-6">
 					<div className="flex items-center">
 						<span className="font-inter text-white md:text-[1.4rem]">
 							Personal Details
 						</span>
-						<EditButton styles="ml-auto" handler={() => {}}></EditButton>
+						<EditButton
+							styles="ml-auto"
+							handler={() => {
+								dispatch(setEdit(true));
+							}}
+						></EditButton>
 					</div>
 
 					<div className="flex ">

@@ -94,6 +94,7 @@ exports.getAllCourses = async (req, res) => {
 				price: true,
 				courseContent: true,
 				instructor: true,
+				thumbnailImage: true,
 			}
 		)
 			.populate("instructor")
@@ -114,10 +115,22 @@ exports.getAllCourses = async (req, res) => {
 exports.getFullCourseDetails = async (req, res) => {
 	try {
 		const { courseId } = req.query;
+		const { userId } = req.user;
+		if (!userId) {
+			throw "Missing User";
+		}
 
 		if (!courseId) {
-			throw new Error("missing details");
+			throw new Error("Missing CourseId");
 		}
+		const course = await Course.findById(courseId);
+		const isUserEnrolled = course.studentEnrolled.find(
+			(id) => id.toString() == userId
+		);
+		if (!isUserEnrolled) {
+			throw "User Not Enrolled";
+		}
+
 		const courseDetails = await Course.findById(courseId)
 			.populate({
 				path: "instructor",
@@ -160,7 +173,7 @@ exports.getFullCourseDetails = async (req, res) => {
 	} catch (err) {
 		return res.status(401).json({
 			success: false,
-			message: err.message,
+			message: err?.message || err,
 		});
 	}
 };
@@ -369,24 +382,77 @@ exports.getEnrolledCourses = async (req, res) => {
 	}
 };
 
-exports.updateCourseProgress = async (req, res) => {
+exports.removeCourseProgress = async (req, res) => {
 	try {
-		const { courseId, subsectionId: subSectionId } = req.body;
+		const { courseId, subSectionId } = req.body;
 
 		if (!courseId || !subSectionId) {
 			throw new Error("missing details");
 		}
 
 		const { userId } = req.user;
+
+		const course = await Course.findById(courseId);
+		const subSection = await SubSection.findById(subSectionId);
+
+		if (!course || !subSection) {
+			throw new Error("input model not exist in db");
+		}
+
+		let courseProgress = await CourseProgress.findOne({
+			userId,
+			courseId,
+		});
+
+		if (!courseProgress) {
+			throw new Error("course progress not exist");
+		}
+
+		courseProgress.completedVideos = courseProgress.completedVideos.filter(
+			(id) => id.toString() !== subSectionId
+		);
+
+		await courseProgress.save();
+
+		return res.status(200).json({
+			success: true,
+			message: "Removed Course Progress",
+			completedVideos: courseProgress.completedVideos,
+		});
+	} catch (err) {
+		return res.status(401).json({
+			success: false,
+			message: err.message,
+		});
+	}
+};
+
+exports.updateCourseProgress = async (req, res) => {
+	try {
+		const { courseId, subSectionId } = req.body;
+
+		if (!courseId || !subSectionId) {
+			throw new Error("missing details");
+		}
+
+		const { userId } = req.user;
+
+		console.log(courseId);
+		console.log(userId);
+
 		const course = await Course.findById(courseId);
 		const subSection = await SubSection.findById(subSectionId);
 		if (!course || !subSection) {
 			throw new Error("input model not exist in db");
 		}
+
 		let courseProgress = await CourseProgress.findOne({
-			courseId: courseId,
-			userId: userId,
+			userId,
+			courseId,
 		});
+
+		console.log(courseProgress);
+
 		if (!courseProgress) {
 			throw new Error("course progress not exist");
 		}
@@ -398,13 +464,53 @@ exports.updateCourseProgress = async (req, res) => {
 		await courseProgress.save();
 		return res.status(200).json({
 			success: true,
-			message: "fetched enrolled courses",
-			courseProgress,
+			message: "Updated Course Progress",
+			completedVideos: courseProgress.completedVideos,
 		});
 	} catch (err) {
 		return res.status(401).json({
 			success: false,
 			message: err.message,
+		});
+	}
+};
+
+exports.getCompletedVideos = async (req, res) => {
+	try {
+		const { courseId } = req.query;
+
+		if (!courseId) {
+			throw new Error("Missing CourseId");
+		}
+
+		const { userId } = req.user;
+		if (!userId) {
+			throw "User Not Found";
+		}
+
+		const course = await Course.findById(courseId);
+
+		if (!course) {
+			throw new Error("input model not exist in db");
+		}
+
+		let courseProgress = await CourseProgress.findOne({
+			courseId: courseId,
+			userId: userId,
+		});
+		if (!courseProgress) {
+			throw "Course Progress Not Found";
+		}
+
+		return res.status(200).json({
+			success: true,
+			message: "fetched Completed Videos",
+			completedVideos: courseProgress.completedVideos,
+		});
+	} catch (err) {
+		return res.status(401).json({
+			success: false,
+			message: err?.message || err,
 		});
 	}
 };
@@ -455,6 +561,7 @@ exports.getProgressPercentage = async (req, res) => {
 		});
 	}
 };
+
 exports.addToCart = async (req, res) => {
 	try {
 		const { courseId } = req.body;

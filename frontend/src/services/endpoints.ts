@@ -1,6 +1,7 @@
 const AUTH_API = `auth/`;
 const COURSE_API = `course/`;
 const PROFILE_API = `profile/`;
+const CART_API = "cart/"
 
 export const root = {
 	RESET_PASSWORD_TOKEN: {
@@ -67,6 +68,10 @@ export const category = {
 
 export const course = {
 
+	GET_COMPLETED_VIDEOS : { 
+		url : COURSE_API + "getCompletedVideos"
+		,method : "GET"
+	},
 	FIND_COURSES : { 
 		url : COURSE_API + "findCourses",  
 		method : "GET", 
@@ -101,6 +106,10 @@ export const course = {
 	},
 	UPDATE_COURSE_PROGRESS: {
 		url: COURSE_API + "updateCourseProgress",
+		method: "POST",
+	},
+REMOVE_COURSE_PROGRESS: {
+		url: COURSE_API + "removeCourseProgress",
 		method: "POST",
 	},
 };
@@ -160,3 +169,20 @@ export const rating = {
 		method: "GET",
 	},
 };
+
+
+export const cart = { 
+	ADD_TO_CART : { 
+		url : CART_API + "addToCart", 
+		method : "POST"
+	}, 
+	REMOVE_FROM_CART : { 
+		url : CART_API + "removeFromCart", 
+		method : "DELETE"
+	},
+    GET_CART_TOTAL : { 
+		url : CART_API + "getCartTotal", 
+		method : "GET"
+	}
+
+}

@@ -14,10 +14,11 @@ import { AxiosResponse } from "axios";
 function Navbar() {
 	const user = useAppSelector((state) => state.profile.user);
 	const location = useLocation();
+	const { cart } = useAppSelector((state) => state.cart);
 
 	const [subLinks, setSubLinks] = useState<[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [totalItems, setTotalItems] = useState<number>(0);
+	const totalItems = cart?.length || 0;
 
 	function matchRoute(route: string) {
 		return matchPath({ path: route }, location.pathname);
@@ -25,6 +26,7 @@ function Navbar() {
 
 	useEffect(() => {
 		(async () => {
+			setLoading(true);
 			try {
 				const response: AxiosResponse = await apiConnector(
 					category.GET_ALL_CATEGORY.method,
@@ -37,10 +39,15 @@ function Navbar() {
 				setSubLinks(response.data.categories);
 			} catch (error: any) {
 				console.error(error.message);
+			} finally {
+				setLoading(false);
 			}
 		})();
 	}, []);
 
+	if (loading) {
+		return <div className="h-14 bg-richblack-700 border-b-[1px]"></div>;
+	}
 	return (
 		<div
 			className={`flex h-14 items-center justify-center border-b-[1px] border-b-richblack-700 ${
@@ -132,7 +139,7 @@ function Navbar() {
 				</nav>
 				<div className="hidden items-center gap-x-4 md:flex">
 					{!!user && user?.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
-						<Link to="/dashboard/cart" className="relative">
+						<Link to="/dashboard/wishlist" className="relative">
 							<AiOutlineShoppingCart className="text-2xl text-richblack-100" />{" "}
 							{totalItems > 0 && (
 								<span className="absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full bg-richblack-600 text-center text-xs font-bold text-yellow-100">
