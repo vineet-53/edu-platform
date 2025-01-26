@@ -1,7 +1,7 @@
 import loginImg from "../assets/Images/login.webp";
 import Template from "../components/core/Auth/Template";
 
-function LoginPage({ setIsLoggedIn }: { setIsLoggedIn?: boolean }) {
+function LoginPage() {
 	return (
 		<Template
 			title="Welcome Back"

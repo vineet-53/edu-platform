@@ -15,6 +15,7 @@ export default function ProfileDropdown() {
 	const ref = useRef(null);
 
 	useOnClickOutside(ref, () => setOpen(false));
+
 	if (!user) return null;
 
 	return (

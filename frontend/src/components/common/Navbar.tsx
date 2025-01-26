@@ -38,7 +38,7 @@ function Navbar() {
 				console.log(response.data.categories);
 				setSubLinks(response.data.categories);
 			} catch (error: any) {
-				console.error(error.message);
+				console.error(error?.message || error);
 			} finally {
 				setLoading(false);
 			}
@@ -138,16 +138,6 @@ function Navbar() {
 					</ul>
 				</nav>
 				<div className="hidden items-center gap-x-4 md:flex">
-					{!!user && user?.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
-						<Link to="/dashboard/wishlist" className="relative">
-							<AiOutlineShoppingCart className="text-2xl text-richblack-100" />{" "}
-							{totalItems > 0 && (
-								<span className="absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full bg-richblack-600 text-center text-xs font-bold text-yellow-100">
-									{totalItems}{" "}
-								</span>
-							)}
-						</Link>
-					)}
 					{!user && (
 						<Link to="/login">
 							<button className="rounded-[8px] border border-richblack-700 bg-richblack-800 px-[12px] py-[8px] text-richblack-100">
@@ -163,11 +153,23 @@ function Navbar() {
 							</button>
 						</Link>
 					)}
-					{!!user && <ProfileDropdown />}{" "}
+					<div className="flex gap-5 items-center ">
+						{!!user && user?.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
+							<Link to="/dashboard/wishlist" className="relative">
+								<AiOutlineShoppingCart className="text-2xl text-richblack-100" />{" "}
+								{totalItems > 0 && (
+									<span className="absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full bg-richblack-600 text-center text-xs font-bold text-yellow-100">
+										{totalItems}{" "}
+									</span>
+								)}
+							</Link>
+						)}
+						{!!user && <ProfileDropdown />}{" "}
+					</div>
+
 					{/* added profile dropdown if token is not equal to null means user is present*/}
 				</div>
 				<button className="mr-4 md:hidden">
-					{" "}
 					<AiOutlineMenu fontSize={24} fill="#AFB2BF" />{" "}
 				</button>
 			</div>

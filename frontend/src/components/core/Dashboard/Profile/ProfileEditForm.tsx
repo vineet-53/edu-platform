@@ -2,18 +2,21 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import IconBtn from "../../../common/IconBtn";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/store";
-import { updateProfile } from "../../../../services/operations/profile";
+import countryCode from "../../../../constants/countrycode.json";
+import { updateProfile } from "../../../../services/operations/profileAPI";
 import { setEdit } from "../../../../store/slices/profile.slice";
+import { nanoid } from "@reduxjs/toolkit";
 
 const genders = ["Male", "Female", "Non-Binary", "Prefer not to say", "Other"];
 
 type FormValues = {
-	firstName: string;
-	lastName: string;
-	dateOfBirth: string;
-	gender: string;
-	contactNumber: string;
-	about: string;
+	firstName?: string;
+	lastName?: string;
+	dateOfBirth?: string;
+	gender?: string;
+	contactNumber?: string;
+	about?: string;
+	countryCode?: string;
 };
 const formstyle =
 	"rounded-lg bg-richblack-700 p-3 text-[16px] leading-[24px] text-richblack-5 shadow-[0_1px_0_0] shadow-white/50 placeholder:text-richblack-400 focus:outline-none";
@@ -21,6 +24,7 @@ const labelStyle = "text-[14px] text-richblack-5";
 
 export const ProfileEditForm = () => {
 	const { user } = useAppSelector((state) => state.profile);
+
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 
@@ -32,7 +36,7 @@ export const ProfileEditForm = () => {
 
 	const submitProfileForm = async (data: any) => {
 		try {
-			dispatch(updateProfile(data));
+			dispatch(updateProfile(data, navigate));
 		} catch (error: any) {
 			console.log("ERROR MESSAGE - ", error.message);
 		}
@@ -74,7 +78,6 @@ export const ProfileEditForm = () => {
 						</div>
 						<div className="flex flex-col gap-2 lg:w-[48%]">
 							<label htmlFor="lastName" className={labelStyle}>
-								{" "}
 								Last Name{" "}
 							</label>
 							<input
@@ -116,7 +119,7 @@ export const ProfileEditForm = () => {
 										message: "Date of Birth cannot be in the future.",
 									},
 								})}
-								defaultValue={user?.additionalDetails?.dateOfBirth}
+								defaultValue={user?.profile?.dob}
 							/>
 							{errors.dateOfBirth && (
 								<span className="-mt-1 text-[12px] text-yellow-100">
@@ -136,13 +139,12 @@ export const ProfileEditForm = () => {
 								id="gender"
 								className={formstyle}
 								{...register("gender", { required: true })}
-								defaultValue={user?.additionalDetails?.gender}
+								defaultValue={user?.profile?.gender}
 							>
-								{genders.map((ele, i) => {
+								{genders.map((ele: string) => {
 									return (
-										<option key={i} value={ele}>
-											{" "}
-											{ele}{" "}
+										<option key={nanoid()} value={ele}>
+											{ele}
 										</option>
 									);
 								})}
@@ -159,15 +161,49 @@ export const ProfileEditForm = () => {
 					<div className="flex flex-col gap-5 lg:flex-row">
 						<div className="flex flex-col gap-2 lg:w-[48%]">
 							<label htmlFor="contactNumber" className={labelStyle}>
-								{" "}
-								Contact Number{" "}
+								Country Code
 							</label>
+
+							<select
+								{...register("countryCode", {
+									required: {
+										value: true,
+										message: "Please enter country code",
+									},
+								})}
+								name="countryCode"
+								id="countrycode"
+								className={formstyle}
+								defaultValue={user?.profile?.contactNumber?.split(" ")[0]}
+							>
+								{countryCode.map((code: { [key: string]: string }) => {
+									return (
+										<option key={nanoid()} value={`${code.code}`}>
+											{code.code === "Not Specified"
+												? "Not Specified"
+												: `${code.code} ${code.country}`}
+										</option>
+									);
+								})}
+							</select>
+							{errors.countryCode && (
+								<span className="-mt-1 text-[12px] text-yellow-100">
+									{errors.countryCode.message}{" "}
+								</span>
+							)}
+						</div>
+
+						<div className="flex flex-col gap-2 lg:w-[48%]">
+							<label htmlFor="contactNumber" className={labelStyle}>
+								Contact Number
+							</label>
+
 							<input
 								type="tel"
 								name="contactNumber"
 								id="contactNumber"
-								placeholder="Enter Contact Number"
 								className={formstyle}
+								placeholder="Enter Contact Number"
 								{...register("contactNumber", {
 									required: {
 										value: true,
@@ -176,7 +212,7 @@ export const ProfileEditForm = () => {
 									maxLength: { value: 12, message: "Invalid Contact Number" },
 									minLength: { value: 10, message: "Invalid Contact Number" },
 								})}
-								defaultValue={user?.additionalDetails?.contactNumber}
+								defaultValue={user?.profile?.contactNumber?.split(" ")[1]}
 							/>
 							{errors.contactNumber && (
 								<span className="-mt-1 text-[12px] text-yellow-100">
@@ -185,41 +221,52 @@ export const ProfileEditForm = () => {
 								</span>
 							)}
 						</div>
+					</div>
+
+					<div>
 						<div className="flex flex-col gap-2 lg:w-[48%]">
 							<label htmlFor="about" className={labelStyle}>
-								{" "}
-								About{" "}
+								About
 							</label>
-							<input
-								type="text"
+							<textarea
 								name="about"
 								id="about"
 								placeholder="Enter Bio Details"
 								className={formstyle}
-								{...register("about", { required: true })}
-								defaultValue={user?.additionalDetails?.about}
+								{...register("about", {
+									required: {
+										value: true,
+										message: "Please enter about ",
+									},
+									maxLength: {
+										value: 150,
+										message: "Exceed About 150 word Limit",
+									},
+								})}
+								defaultValue={user?.profile?.about}
 							/>
 							{errors.about && (
 								<span className="-mt-1 text-[12px] text-yellow-100">
 									{" "}
-									Please enter your About.{" "}
+									{errors.about.message}{" "}
 								</span>
 							)}
 						</div>
 					</div>
-				</div>
 
-				<div className="flex justify-end gap-2">
-					<button
-						onClick={() => {
-							dispatch(setEdit(false));
-							navigate("/dashboard/my-profile");
-						}}
-						className="cursor-pointer rounded-md bg-richblack-700 py-2 px-5 font-semibold text-richblack-50"
-					>
-						Cancel
-					</button>
-					<IconBtn type="submit" text="Save" />
+					<div className="flex justify-end gap-3">
+						<button
+							onClick={() => {
+								dispatch(setEdit(false));
+								navigate("/dashboard/my-profile");
+							}}
+							type="button"
+							className="cursor-pointer rounded-md bg-richblack-700 py-2 px-5 font-semibold text-richblack-50"
+						>
+							Cancel
+						</button>
+						<IconBtn type="submit" text="Save" />
+					</div>
 				</div>
 			</form>
 		</>

@@ -1,11 +1,11 @@
 import { NavigateFunction } from "react-router-dom";
 import { AppDispatch } from "../../store/store";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { apiConnector } from "../apiconnector";
 import { auth } from "../endpoints";
-import toast, { ToastType } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { setUser } from "../../store/slices/profile.slice";
-import { setLoading } from "../../store/slices/auth.slice";
+import { setToken } from "../../store/slices/auth.slice";
 import { setItemToLocalStorage } from "../../utils/localStorage";
 
 // send the otp to the email
@@ -40,22 +40,21 @@ export function login(
 	navigate: NavigateFunction
 ) {
 	return async (dispatch: AppDispatch) => {
-		await apiConnector(auth.LOGIN.method, auth.LOGIN.url, {
-			email,
-			password,
-		})
-			.then((res) => {
-				console.log(res);
-				dispatch(setUser(res.data.user));
-				setItemToLocalStorage("user", res.data.user);
-				setItemToLocalStorage("token", res.data.token);
-				toast.success(res.data.message);
-				navigate("/");
-			})
-			.catch((error) => {
-				console.error(error);
-				toast.error(error?.message);
+		try {
+			const res = await apiConnector(auth.LOGIN.method, auth.LOGIN.url, {
+				email,
+				password,
 			});
+			dispatch(setUser(res.data.user));
+			dispatch(setToken(res.data.token))
+			setItemToLocalStorage("user", res.data.user);
+			setItemToLocalStorage("token", res.data.token);
+			toast.success(res.data.message);
+			navigate("/dashboard/my-profile");
+		} catch (error: any) {
+			console.error(error);
+			toast.error("Error login user");
+		}
 	};
 }
 
@@ -88,9 +87,25 @@ export function signup(
 	};
 }
 
-export function logout(navigate  : NavigateFunction) {
+export function logout(navigate: NavigateFunction) {
 	return async (dispatch: AppDispatch) => {
+		const toastId = toast.loading("Logging Out...");
 		try {
-		} catch (error) {}
+			//build this
+			const response = await apiConnector(auth.LOGOUT.method, auth.LOGOUT.url);
+			if (!response.data.success) {
+				throw response.data;
+			}
+			dispatch(setUser(null));
+			dispatch(setToken(null));
+			localStorage.clear();
+			toast.success(response.data.message);
+			navigate("/");
+		} catch (error: any) {
+			toast.error("Error Logging Out");
+			console.error(error?.message || error);
+		} finally {
+			toast.dismiss(toastId);
+		}
 	};
 }

@@ -128,8 +128,9 @@ module.exports = {
         maxWidth: {
           maxContent: "1260px",
           maxContentTab: "650px",
-          maxContentMobile: "450px"
+          maxContentMobile: "350px"
         },
+        
       },
     },
     plugins: [],

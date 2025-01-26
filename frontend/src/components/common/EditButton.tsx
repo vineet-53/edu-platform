@@ -6,7 +6,7 @@ export const EditButton = ({
 	handler,
 }: {
 	styles: string;
-	handler: () => void;
+	handler?: () => void;
 }) => {
 	return (
 		<IconBtn onclick={handler} customClasses={styles}>

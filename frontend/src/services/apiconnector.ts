@@ -6,13 +6,13 @@ import axios, {
   } from "axios";
 import { getItemFromLocalStorage } from "../utils/localStorage";
 
-axios.defaults.xsrfCookieName = 'XSRF-TOKEN';
-axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN'
+  axios.defaults.xsrfCookieName = 'XSRF-TOKEN';
+  axios.defaults.xsrfHeaderName = 'X-XSRF-TOKEN'
   
   const axiosConfig: AxiosRequestConfig = {
     baseURL: "http://localhost:8000/api/v1/",
     headers : { 
-      "X-Auth-Token" : `${getItemFromLocalStorage('token')}`
+      "x-auth-token" : `${getItemFromLocalStorage('token')}`
     }
   };
   

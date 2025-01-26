@@ -3,9 +3,9 @@ import { Navigate } from "react-router-dom";
 import { useAppSelector } from "../../../hooks/store";
 
 function OpenRoute({ children }: { children: React.ReactNode }) {
-	const user = useAppSelector((state) => state.profile.user);
+	const { token } = useAppSelector((state) => state.auth);
 
-	if (user === null) {
+	if (token === null) {
 		return children;
 	} else {
 		return <Navigate to="/dashboard/my-profile" />;

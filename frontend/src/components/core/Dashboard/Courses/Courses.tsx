@@ -25,7 +25,6 @@ const Courses = () => {
 			}
 		})();
 	}, []);
-
 	return (
 		<DashboardContentContainer styles="">
 			<UrlText />

@@ -161,6 +161,10 @@ export const auth = {
 		url: AUTH_API + "changeAccountType",
 		method: "POST",
 	},
+	LOGOUT: {
+		url: AUTH_API + "logout",
+		method: "GET",
+	},
 };
 
 export const rating = {
@@ -183,6 +187,13 @@ export const cart = {
     GET_CART_TOTAL : { 
 		url : CART_API + "getCartTotal", 
 		method : "GET"
+	},
+    GET_CART_DETAILS : { 
+		url : CART_API + "getCartDetails", 
+		method : "GET"
 	}
+
+
+
 
 }

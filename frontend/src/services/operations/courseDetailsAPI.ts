@@ -30,7 +30,6 @@ export const getCompletedVideos = async (courseId: string) => {
 		if (!response.data.success) {
 			throw response.data;
 		}
-		console.log(response.data);
 		return response.data.completedVideos;
 	} catch (err: any) {
 		console.error(err?.message || err);

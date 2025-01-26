@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getItemFromLocalStorage } from "../../utils/localStorage";
 
 interface InitalState  { 
 	cart  : null | [], 
@@ -6,7 +7,7 @@ interface InitalState  {
 }
 
 const initialState : InitalState = {
-	cart: null ,
+	cart: getItemFromLocalStorage('cart'),
 	loading: false,
 };
 
