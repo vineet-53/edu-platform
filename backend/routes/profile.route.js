@@ -13,7 +13,7 @@ const {
 	getEnrolledCourses,
 	getInstructorCourses,
 } = require("../controllers/course");
-const { auth, isInstructor } = require("../middlewares/auth");
+const { auth, isInstructor, isStudent } = require("../middlewares/auth");
 const upload = require("../configs/multer");
 
 router.put(
@@ -28,7 +28,7 @@ router.get("/getUserDetails", auth, getUserDetails);
 router.delete("/deleteAccount", auth, deleteAccount);
 router.post("/changePassword", auth, changePassword);
 router.get("/resetProfilePicture", auth, resetProfilePicture);
-router.get("/getEnrolledCourses", auth, getEnrolledCourses);
+router.get("/getEnrolledCourses", auth, isStudent, getEnrolledCourses);
 router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses);
 
 module.exports = router;

@@ -52,9 +52,12 @@ exports.removeCourseFromCart = async (req, res) => {
 
 		await user.save();
 
+		user = await User.findById(userId).populate("cart").exec();
+
 		return res.status(200).json({
 			message: "Removed Course From Cart",
 			success: true,
+			cart: user.cart,
 		});
 	} catch (err) {
 		return res.status(400).json({
@@ -85,6 +88,29 @@ exports.getCartTotal = async (req, res) => {
 			message: "Cart Total",
 			success: true,
 			total: totalCartPrice,
+		});
+	} catch (err) {
+		return res.status(400).json({
+			message: err?.message || err,
+			success: false,
+		});
+	}
+};
+
+exports.getCartDetails = async (req, res) => {
+	try {
+		const { userId } = req.user;
+
+		let user = await User.findById(userId).populate("cart");
+
+		if (!user) {
+			throw "User Not Found";
+		}
+
+		return res.status(200).json({
+			message: "Cart Total",
+			success: true,
+			cart: user.cart,
 		});
 	} catch (err) {
 		return res.status(400).json({

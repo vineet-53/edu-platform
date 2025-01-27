@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getItemFromLocalStorage } from "../../utils/localStorage";
 
 interface InitalState  { 
-	cart  : null | [], 
+	cart  : null | any[], 
 	loading : boolean
 }
 
@@ -22,8 +22,11 @@ const cartSlice = createSlice({
 		setLoading(state, value) {
 			state.loading = value.payload;
 		},
+		addToCart (state , value) { 
+			state.cart?.push(value.payload)
+		}
 	},
 });
 
-export const { setCart, setLoading } = cartSlice.actions;
+export const {addToCart , setCart, setLoading } = cartSlice.actions;
 export default cartSlice.reducer;

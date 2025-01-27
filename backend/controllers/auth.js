@@ -216,27 +216,31 @@ exports.changeAccountType = async (req, res) => {
 
 exports.logout = async (req, res) => {
 	try {
-		const { email } = req.body;
+		const { email } = req.user;
+		console.log("Logout this user ", req.user);
 
 		if (!email) {
 			throw new Error("Missing Email");
 		}
 
-		if (res.cookies.token) {
+		if (res?.cookies?.token) {
+			console.log("Clear the token");
 			res.clearCookie("token");
 		}
 
 		const user = await User.findOne({ email });
+
 		user.token = null;
 		user.active = false;
-		user.save();
+
+		await user.save();
 
 		return res.status(200).json({
 			success: true,
 			message: "Logged Out",
 		});
 	} catch (err) {
-		return res.status(401).json({
+		return res.status(400).json({
 			success: false,
 			message: err.message,
 		});

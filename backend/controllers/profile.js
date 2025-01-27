@@ -43,11 +43,12 @@ exports.updateProfile = async (req, res) => {
 			firstName,
 			lastName,
 			gender,
-			dob,
+			dateOfBirth: dob,
 			contactNumber,
 			countryCode,
 			about,
 		} = req.body;
+
 		const { userId } = req.user;
 
 		// validate input details
@@ -98,13 +99,13 @@ exports.deleteAccount = async (req, res) => {
 		if (!user) {
 			throw new Error("User Not Found");
 		}
-		if (user.profile) {
+		if (user?.profile) {
 			let profile = await Profile.findByIdAndDelete(user.profile._id, {
 				new: true,
 			});
 			console.log("DELETED  USER PROFILE --- ", profile);
 		}
-		if (!user.courses.length) {
+		if (!user?.courses?.length) {
 			for (let courseId in user.courses) {
 				const course = await Course.findAndUpdate(
 					{ _id: courseId },
@@ -131,14 +132,13 @@ exports.deleteAccount = async (req, res) => {
 		}
 
 		// DELTE USER PROFILE IAMGE
-		await destroyFromCloudinary(user.imagePublicId);
+		if (user?.imagePublicId) await destroyFromCloudinary(user?.imagePublicId);
 
 		await Otp.findByIdAndDelete({ email: user.email }, { new: true });
 		// courses
 		let deletedUser = await User.findByIdAndDelete(userId, { new: true });
 		console.log("DELETD USER ----", deletedUser);
 		return res
-			.clearCookie("token")
 			.status(200)
 			.json({
 				success: true,
@@ -159,12 +159,13 @@ exports.getUserDetails = async (req, res) => {
 	try {
 		const { userId } = req.user;
 		if (!userId) {
-			throw new Error("missing properties");
+			throw new Error("User Not Found");
 		}
 		let user = await User.findById(userId)
 			.populate("profile")
 			.select("-resetPasswordToken -token -active ")
 			.exec();
+
 		let cart = await User.findById(userId)
 			.populate({
 				path: "cart",

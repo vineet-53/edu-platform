@@ -10,14 +10,10 @@ exports.auth = async (req, res, next) => {
 		}
 		const { accessToken } = jwt.verify(hashedToken, process.env.JWT_SECRET);
 
-		const decodedPayload = await jwt.verify(
-			accessToken,
-			process.env.JWT_SECRET
-		);
+		const decodedPayload = jwt.verify(accessToken, process.env.JWT_SECRET);
 
 		req.user = decodedPayload;
 
-		console.log("req.user  : ", req.user);
 		next();
 	} catch (err) {
 		return res.status(401).json({

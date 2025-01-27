@@ -1,5 +1,5 @@
 import IconBtn from "./IconBtn";
-interface ModalData {
+export interface ModalData {
 	text1: string;
 	text2: string;
 	btn1Handler: () => void;

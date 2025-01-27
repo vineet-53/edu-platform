@@ -324,7 +324,15 @@ exports.getCourseDetails = async (req, res) => {
 
 		const course = await Course.findById(courseId)
 			.populate("instructor")
-			.populate("ratingAndReviews");
+			.populate("ratingAndReviews")
+			.populate({
+				path: "sections",
+				populate: {
+					path: "subSection",
+					select: "-videoUrl",
+				},
+			});
+
 		if (!course) {
 			throw new Error("Course Not Found");
 		}
@@ -365,7 +373,18 @@ exports.getEnrolledCourses = async (req, res) => {
 	try {
 		const { userId } = req.user;
 
-		const user = await User.findById(userId).populate("courses").exec();
+		const user = await User.findById(userId)
+			.populate({
+				path: "courses",
+				populate: {
+					path: "sections",
+					populate: {
+						path: "subSection",
+					},
+				},
+			})
+			.exec();
+
 		if (!user) {
 			throw new Error("User Not Found");
 		}
@@ -498,14 +517,11 @@ exports.getCompletedVideos = async (req, res) => {
 			courseId: courseId,
 			userId: userId,
 		});
-		if (!courseProgress) {
-			throw "Course Progress Not Found";
-		}
 
 		return res.status(200).json({
 			success: true,
 			message: "fetched Completed Videos",
-			completedVideos: courseProgress.completedVideos,
+			completedVideos: courseProgress?.completedVideos || [],
 		});
 	} catch (err) {
 		return res.status(401).json({
