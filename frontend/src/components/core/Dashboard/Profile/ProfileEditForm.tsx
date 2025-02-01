@@ -18,9 +18,9 @@ type FormValues = {
 	about?: string;
 	countryCode?: string;
 };
-const formstyle =
+export const formstyle =
 	"rounded-lg bg-richblack-700 p-3 text-[16px] leading-[24px] text-richblack-5 shadow-[0_1px_0_0] shadow-white/50 placeholder:text-richblack-400 focus:outline-none";
-const labelStyle = "text-[14px] text-richblack-5";
+export const labelStyle = "text-[14px] text-richblack-5";
 
 export const ProfileEditForm = () => {
 	const { user } = useAppSelector((state) => state.profile);

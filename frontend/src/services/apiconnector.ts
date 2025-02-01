@@ -12,7 +12,7 @@ import { getItemFromLocalStorage } from "../utils/localStorage";
   const axiosConfig: AxiosRequestConfig = {
     baseURL: "http://localhost:8000/api/v1/",
     headers : { 
-      "x-auth-token" : `${getItemFromLocalStorage('token')}`
+      Authorization : `Bearer ${getItemFromLocalStorage('token')}`
     }
   };
   

@@ -95,6 +95,7 @@ exports.deleteAccount = async (req, res) => {
 	try {
 		const { userId } = req.user;
 		console.log("Deleting User ", userId);
+		
 		const user = await User.findById(userId);
 		if (!user) {
 			throw new Error("User Not Found");
@@ -131,10 +132,17 @@ exports.deleteAccount = async (req, res) => {
 			console.log("DELETED USER FROM COURSE PROGRESS ---", cp);
 		}
 
-		// DELTE USER PROFILE IAMGE
+		// Delete USER PROFILE IAMGE
 		if (user?.imagePublicId) await destroyFromCloudinary(user?.imagePublicId);
 
-		await Otp.findByIdAndDelete({ email: user.email }, { new: true });
+	// if otp is there then delete
+		const userOtp = await Otp.find({email : user.email})
+		if(userOtp) { 
+			userOtp.forEach(async otp => { 
+				await Otp.findByIdAndDelete(otp._id.toString());
+			})
+			console.log("Deleted User otps" , userOtp)
+		}
 		// courses
 		let deletedUser = await User.findByIdAndDelete(userId, { new: true });
 		console.log("DELETD USER ----", deletedUser);
