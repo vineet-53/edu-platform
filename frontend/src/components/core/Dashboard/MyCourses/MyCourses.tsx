@@ -1,6 +1,7 @@
 import DashboardContentContainer from "../../../common/DashboardContentContainer";
 import UrlText from "../../../common/UrlText";
 import PageHeadingTitlte from "../PageHeadingTitlte";
+import CourseCard from "./CourseCard";
 import MyCourseContent from "./MyCourseContent";
 
 const MyCourses = () => {

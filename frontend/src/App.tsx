@@ -21,6 +21,7 @@ import CategoryPage from "./pages/CategoryPage";
 import Profile from "./components/core/Dashboard/Profile/Profile";
 import MyCourses from "./components/core/Dashboard/MyCourses/MyCourses";
 import Footer from "./components/common/Footer";
+import CreateCourse from "./components/core/Dashboard/CreateCourse/CreateCourse";
 
 const PurchaseHistory = lazy(
   () => import("./components/core/Dashboard/PurchaseHistory/PurchaseHistory"),
@@ -137,6 +138,7 @@ function App() {
           {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
             <>
               <Route path="my-courses" element={<MyCourses />} />
+              <Route path="create-course" element={<CreateCourse />} />
             </>
           )}
         </Route>

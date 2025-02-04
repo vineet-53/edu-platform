@@ -3,6 +3,12 @@ import { nanoid } from "@reduxjs/toolkit";
 import SidebarLink from "./SidebarLink";
 export const data = [
   {
+    icon: "VscDashboard",
+    text: "Dashboard",
+    url: "/dashboard",
+    type: ["Student", "Admin", "Instructor"],
+  },
+  {
     icon: "VscAccount",
     text: "My Profile",
     url: "/dashboard/my-profile",
@@ -38,6 +44,12 @@ export const data = [
     text: "My Courses",
     type: ["Instructor"],
     url: "/dashboard/my-courses",
+  },
+  {
+    icon: "VscEdit",
+    text: "Create Course",
+    type: ["Instructor"],
+    url: "/dashboard/create-course",
   },
 ];
 export const defaultButton: ListItem[] = [
